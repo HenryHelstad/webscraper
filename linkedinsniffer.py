@@ -8,22 +8,24 @@ from termcolor import colored
 
 SEARCHMAX = int(sys.argv[1])
 
+
+#change this regex to suit your search note: if a true regex is found it is given a point 
+#if a false regex is found remove it from the running 
+#It's currently set to 1 point minimum to even be returned 
 regex = [(re.compile(r'(comp\stia|comptia)?\s(security\+|sec\+)', re.IGNORECASE),True), 
         (re.compile(r'IAT Level 2',re.IGNORECASE),True),
         (re.compile(r'soc\s1', re.IGNORECASE),True),
         (re.compile(r'\(?[1-9]\)?\+?\syear',re.IGNORECASE),False),
         (re.compile(r'CLEARANCE REQUIRED', re.IGNORECASE),False),
-        (re.compile(r'Bachelor|degree', re.IGNORECASE),True)]
-
-#"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Network%20Security&location=United%20States&locationId=&geoId=103644278&f_TPR=&f_JT=F&f_E=2&position=1&pageNum=0&start="
-#"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?currentJobId=3304792893&distance=25&f_E=3%2C4%2C6&geoId=90000070&keywords=soc%2Banalyst&start="
-
-
-#URL = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?currentJobId=3304792893&distance=25&f_E=3%2C4%2C6&geoId=90000070&keywords=soc%2Banalyst&start=0&position=1&pageNum=6"
-
-#takes in an api version of a linked in search url and returns 
+        (re.compile(r'Bachelor|degree', re.IGNORECASE),True),
+        (re.compile(r'(one|two|three|four|five|six|seven|eight|nine|ten) plus years', re.IGNORECASE),False),
+        (re.compile(r'Prior experiencing working in', re.IGNORECASE),False),
+        (re.compile(r'Clearance Level', re.IGNORECASE),False),
+        (re.compile(r'python', re.IGNORECASE),True),
+         ]
 
 listOfJobs = []
+
 class job:
     title = ""
     date = None
@@ -55,7 +57,8 @@ def search(content):
     i = 0
     for r in regex:
         t = r[0].search(content)
-        if t != None and r[1]:
+        #logic of scoring regex results
+        if t != None and r[1]:  
             i+=1
         if t != None and not r[1]:
             i = -1
@@ -76,7 +79,7 @@ def extractJobInfo(jobList):
         date = soup.find_all("span", {"class", "posted-time-ago__text topcard__flavor--metadata"})
         applicantNum = soup.find_all("span", {"num-applicants__caption topcard__flavor--metadata topcard__flavor--bullet"})
         a = search(data)
-        if a >= 1:
+        if a >= 1: #change this if you want to change the minimum score to be in the output
             curr = job()
             curr.score = a
             curr.link = i
