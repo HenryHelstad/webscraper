@@ -6,7 +6,3 @@ https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=
 what things should be changed in the urls for your searches in brackets. you can use multiple searches
 https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=[search terms]&location=[location]&position=1&currentJobId=&start=
 
-change the regex in the 
-
-
-
