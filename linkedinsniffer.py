@@ -11,7 +11,9 @@ SEARCHMAX = int(sys.argv[1])
 
 #change this regex to suit your search note: if a true regex is found it is given a point 
 #if a false regex is found remove it from the running 
-#It's currently set to 1 point minimum to even be returned 
+#It's currently set to 1 point minimum to even be returned
+regex = []
+'''
 regex = [(re.compile(r'(comp\stia|comptia)?\s(security\+|sec\+)', re.IGNORECASE),True), 
         (re.compile(r'IAT Level 2',re.IGNORECASE),True),
         (re.compile(r'soc\s1', re.IGNORECASE),True),
@@ -23,7 +25,7 @@ regex = [(re.compile(r'(comp\stia|comptia)?\s(security\+|sec\+)', re.IGNORECASE)
         (re.compile(r'Clearance Level', re.IGNORECASE),False),
         (re.compile(r'python', re.IGNORECASE),True),
          ]
-
+'''
 listOfJobs = []
 
 class job:
@@ -100,17 +102,34 @@ def extractJobInfo(jobList):
         elif a >= 0:
             print("****",a, title.strip("\n   "), i)'''
 
+
+r = []
+#reads in regex file
+with open( sys.argv[3]) as regexFile:
+    for i in [l.rstrip() for l in regexFile]:
+        r.append(tuple(i.split('%')))
+
+#compiles and interprets regex
+for i in r:
+    b = False
+    reg = i[0]
+    if i[1] == 'true':
+        b = True
+    if len(i) == 2:
+        regex.append((re.compile(i[0],b)))
+    elif len(i) == 3:
+        regex.append((re.compile(i[0], re.IGNORECASE),b))
+
+#reads in search links
 with open(sys.argv[2]) as links:
     searches = [l.rstrip() for l in links]
 
-print(searches)
+#extracts data from urls and applys searches
 for url in searches:
+    print(url)
     extractJobInfo(getjoblinks(url))
-'''
-for a in listOfJobs:
-    print(a.score, a.title, a.date, a.applicants_number, a.link)
-'''
-with open( sys.argv[3], 'w+') as out:
+
+#dumps data to json file
+with open( sys.argv[4], 'w+') as out:
      for a in listOfJobs:
          json.dump(a,out, indent=4, cls=jobEncoder)
-
