@@ -1,9 +1,9 @@
-import json
 import sys
 import requests
 import re
 from bs4 import BeautifulSoup
 from termcolor import colored
+import jsonpickle
 #searchURL = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Soc%2Banalyst&location=United%20States&position=1&currentJobId=&start="
 
 SEARCHMAX = int(sys.argv[1])
@@ -13,19 +13,6 @@ SEARCHMAX = int(sys.argv[1])
 #if a false regex is found remove it from the running 
 #It's currently set to 1 point minimum to even be returned
 regex = []
-'''
-regex = [(re.compile(r'(comp\stia|comptia)?\s(security\+|sec\+)', re.IGNORECASE),True), 
-        (re.compile(r'IAT Level 2',re.IGNORECASE),True),
-        (re.compile(r'soc\s1', re.IGNORECASE),True),
-        (re.compile(r'\(?[1-9]\)?\+?\syear',re.IGNORECASE),False),
-        (re.compile(r'CLEARANCE REQUIRED', re.IGNORECASE),False),
-        (re.compile(r'Bachelor|degree', re.IGNORECASE),True),
-        (re.compile(r'(one|two|three|four|five|six|seven|eight|nine|ten) plus years', re.IGNORECASE),False),
-        (re.compile(r'Prior experiencing working in', re.IGNORECASE),False),
-        (re.compile(r'Clearance Level', re.IGNORECASE),False),
-        (re.compile(r'python', re.IGNORECASE),True),
-         ]
-'''
 listOfJobs = []
 
 class job:
@@ -35,9 +22,6 @@ class job:
     score = 0
     link = ""
 
-class jobEncoder(json.JSONEncoder):
-    def default(self, o):
-        return o.__dict__
 
 def getjoblinks(jobSearchURL): 
     i = 0
@@ -113,6 +97,7 @@ with open( sys.argv[3]) as regexFile:
 for i in r:
     b = False
     reg = i[0]
+    print(i)
     if i[1] == 'true':
         b = True
     if len(i) == 2:
@@ -129,7 +114,22 @@ for url in searches:
     print(url)
     extractJobInfo(getjoblinks(url))
 
+pickled = jsonpickle.encode(listOfJobs)
+fileWrite = open(sys.argv[4], "w")h
+
+
+'''
+print("\n",pickled)
+fileWrite.write(pickled)
+fileWrite.close()
+fileRead = open("test.test", "r")
+pickled = fileRead.read()
+fileRead.close()
+print("\n",pickled)
+print("\n",jsonpickle.decode(pickled))
 #dumps data to json file
 with open( sys.argv[4], 'w+') as out:
      for a in listOfJobs:
          json.dump(a,out, indent=4, cls=jobEncoder)
+
+'''
