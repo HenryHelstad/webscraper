@@ -44,11 +44,11 @@ def search(content):
     for r in regex:
         t = r[0].search(content)
         #logic of scoring regex results
-        if t != None and r[1]:  
-            i+=1
-        if t != None and not r[1]:
-            i = -1
+        if t != None and r[1] == 0:  
+            i = -100
             break
+        elif t != None:
+            i += r[1]
     return i
     
 
@@ -65,7 +65,7 @@ def extractJobInfo(jobList):
         date = soup.find_all("span", {"class", "posted-time-ago__text topcard__flavor--metadata"})
         applicantNum = soup.find_all("span", {"num-applicants__caption topcard__flavor--metadata topcard__flavor--bullet"})
         a = search(data)
-        if a >= 1: #change this if you want to change the minimum score to be in the output
+        if a >= 0: #change this if you want to change the minimum score to be in the output
             curr = job()
             curr.score = a
             curr.link = i
@@ -86,12 +86,26 @@ def extractJobInfo(jobList):
         elif a >= 0:
             print("****",a, title.strip("\n   "), i)'''
 
+regex.append((re.compile("Clearance\slevel|top secret", re.IGNORECASE), 0 ))
+regex.append((re.compile("(two|three|four|five|six|seven|eight|nine|ten|[2-9])\)?\+?\s(plus\s)?years", re.IGNORECASE), 0 ))
+regex.append((re.compile("(Minimum )?(two|three|four|five|six|seven|eight|nine|ten|[2-9]) (or more)?years (relevant|of experience)", re.IGNORECASE), 0 ))
 
+regex.append((re.compile("soc\s1", re.IGNORECASE), 1 ))
+regex.append((re.compile("(comptia|comptia)?\s(security\+|sec\+)", re.IGNORECASE), 2 ))
+regex.append((re.compile("Bachelor|degree", re.IGNORECASE), 1 ))
+regex.append((re.compile("mathematics", re.IGNORECASE), 1 ))
+regex.append((re.compile("python", re.IGNORECASE), 1 ))
+regex.append((re.compile("c(\+\+)?", re.IGNORECASE), 1 ))
+
+
+
+'''
 r = []
 #reads in regex file
 with open( sys.argv[3]) as regexFile:
     for i in [l.rstrip() for l in regexFile]:
-        r.append(tuple(i.split('%')))
+        r.append(tuple(i.split('%'))
+
 
 #compiles and interprets regex
 for i in r:
@@ -101,9 +115,12 @@ for i in r:
     if i[1] == 'true':
         b = True
     if len(i) == 2:
+        print("triggered")
         regex.append((re.compile(i[0],b)))
     elif len(i) == 3:
-        regex.append((re.compile(i[0], re.IGNORECASE),b))
+        print(i[0])
+        regex.append((re.compile(i[0], re.IGNORECASE), b ))
+'''
 
 #reads in search links
 with open(sys.argv[2]) as links:
@@ -115,7 +132,8 @@ for url in searches:
     extractJobInfo(getjoblinks(url))
 
 pickled = jsonpickle.encode(listOfJobs)
-fileWrite = open(sys.argv[4], "w")h
+fileWrite = open(sys.argv[3], "w")
+fileWrite.write(pickled)
 
 
 '''

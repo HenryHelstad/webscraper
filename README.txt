@@ -1,4 +1,4 @@
-python linkedinsniffer.py [number of queryed jobs] [text file of search links] [regex] [output file json format]
+python linkedinsniffer.py [number of queryed jobs] [text file of search links] [output file json format]
 
 search file contents example: 
 https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Soc%2Banalyst&location=United%20States&position=1&currentJobId=&start=
